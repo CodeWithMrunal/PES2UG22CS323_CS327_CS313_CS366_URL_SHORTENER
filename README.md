@@ -1,6 +1,6 @@
 # **Load-Balanced URL Shortener using Docker & Kubernetes**
 ## **Steps to run:**
-
+***Week 1***
 **Step 1:** Setup Docker : `sudo systemctl start docker`
 
 **Step 2:** Navigate to the directory where Dockerfile is present and Build a Docker Image: `sudo docker build -t url-shortener .`
@@ -13,3 +13,73 @@
 or you can use *POSTMAN*
 
 **Expected output:** You should receive a shortened url for www.google.com , which when clicked redirects you to google page.
+
+***Week 2***
+
+Start minikube:
+
+1. start minikube
+
+```
+minikube start
+```
+
+2. Use Minikube’s Docker Daemon
+
+```
+eval $(minikube docker-env)
+```
+
+3. Build the image:
+
+```
+docker build -t url-shortener .
+```
+
+4. Load the image into minikube:
+
+```
+ minikube image load url-shortener:latest
+```
+
+5. Check if Minikube has access to the image:
+
+```
+minikube image list | grep url-shortener
+```
+
+6. Deploy our Kubernetes Application:
+
+```
+kubectl apply -f url-shortener-deployment.yaml
+kubectl apply -f url-shortener-service.yaml
+```
+
+7. Check if everything is running:
+
+```
+kubectl get pods
+kubectl get services
+```
+
+8. Expose the service:
+
+```
+kubectl expose deployment url-shortener --type=NodePort --port=5000
+```
+
+9.  Get the Minikube Service URL
+
+```
+minikube service url-shortener
+```
+
+10. Test API
+
+```
+curl -X POST http://<MINIKUBE_URL>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
+```
+
+11.🔄 Switching Back to Default Docker Daemon
+
+```eval $(minikube docker-env --unset)```
