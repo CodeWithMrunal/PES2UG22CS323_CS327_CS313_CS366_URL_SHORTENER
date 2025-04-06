@@ -57,7 +57,7 @@ kubectl apply -f redis-service.yaml
 7. Apply ConfigMaps:
 
 ```
-kubectl apply -f configmap.yaml
+kubectl apply -f url-shortener-configmap.yaml
 ```
 
 8. Deploy our url-shortner-app:
@@ -85,12 +85,23 @@ minikube service url-shortener
 ```
 curl -X POST http://<MINIKUBE_URL>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 ```
+12. Check if url mapping is being stored in redis:
+    (this command will open redis terminal inside the pod)
+```
+kubectl exec -it <redis-podname> -- redis-cli
+```
 
-12.🔄 Switching Back to Default Docker Daemon
+13. Redis CLI command:
+```
+KEYS *
+GET <Key>
+```
+
+14.🔄 Switching Back to Default Docker Daemon
 
 ```eval $(minikube docker-env --unset)```
 
-13. Cleanup:
+15. Cleanup:
 ```
 kubectl delete -f url-shortener-deployment.yaml
 kubectl delete -f url-shortener-service.yaml
