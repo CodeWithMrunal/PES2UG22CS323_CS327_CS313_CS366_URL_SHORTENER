@@ -2,26 +2,29 @@ import random
 import string
 import subprocess
 import json
+import redis
+import os
 from flask import Flask, request, jsonify, redirect
 
 app = Flask(__name__)
-url_store = {}  # In-memory dictionary to store URL mappings
+
+# Redis connection config from environment variables
+REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
+REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
+
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 
 def get_minikube_ip():
-    """Fetch Minikube IP and the correct NodePort dynamically."""
     try:
         minikube_ip = subprocess.check_output(["minikube", "ip"]).decode("utf-8").strip()
-        
-        # Get the actual NodePort from kubectl
         kubectl_output = subprocess.check_output(["kubectl", "get", "services", "url-shortener", "-o", "json"]).decode("utf-8")
         service_data = json.loads(kubectl_output)
-        node_port = service_data["spec"]["ports"][0]["nodePort"]  # Fetch dynamically
-
+        node_port = service_data["spec"]["ports"][0]["nodePort"]
         return f"http://{minikube_ip}:{node_port}/"
     except Exception as e:
         print(f"Error fetching Minikube IP or NodePort: {e}")
-        return "http://localhost:5000/"  # Fallback for local testing
+        return "http://localhost:5000/"
 
 
 BASE_URL = get_minikube_ip()
@@ -44,17 +47,16 @@ def shorten_url():
         return jsonify({'error': 'URL is required'}), 400
 
     short_url = generate_short_url()
-    url_store[short_url] = long_url
+    r.set(short_url, long_url)  # Save in Redis
 
-    print(f"Stored {short_url} -> {long_url} in memory")
+    print(f"Stored {short_url} -> {long_url} in Redis")
 
-    return jsonify({'short_url': request.host_url + short_url})  # dynamically returns host URL
-
+    return jsonify({'short_url': request.host_url + short_url})
 
 
 @app.route('/<short_url>', methods=['GET'])
 def redirect_url(short_url):
-    long_url = url_store.get(short_url)
+    long_url = r.get(short_url)
     if long_url:
         return redirect(long_url)
     return jsonify({'error': 'URL not found'}), 404

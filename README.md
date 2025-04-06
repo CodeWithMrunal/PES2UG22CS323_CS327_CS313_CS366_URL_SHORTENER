@@ -48,38 +48,55 @@ docker build -t url-shortener .
 minikube image list | grep url-shortener
 ```
 
-6. Deploy our Kubernetes Application:
+6. Deploy Redis Manifests:
+
+```
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f redis-service.yaml
+```
+7. Apply ConfigMaps:
+
+```
+kubectl apply -f configmap.yaml
+```
+
+8. Deploy our url-shortner-app:
 
 ```
 kubectl apply -f url-shortener-deployment.yaml
 kubectl apply -f url-shortener-service.yaml
 ```
 
-7. Check if everything is running:
+9. Check if everything is running:
 
 ```
 kubectl get pods
 kubectl get services
 ```
 
-8. Expose the service:
-
-```
-kubectl expose deployment url-shortener --type=NodePort --port=5000
-```
-
-9.  Get the Minikube Service URL
+10.  Get the Minikube Service URL
 
 ```
 minikube service url-shortener
 ```
 
-10. Test API
+11. Test API
 
 ```
 curl -X POST http://<MINIKUBE_URL>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 ```
 
-11.🔄 Switching Back to Default Docker Daemon
+12.🔄 Switching Back to Default Docker Daemon
 
 ```eval $(minikube docker-env --unset)```
+
+13. Cleanup:
+```
+kubectl delete -f url-shortener-deployment.yaml
+kubectl delete -f url-shortener-service.yaml
+kubectl delete -f redis-deployment.yaml
+kubectl delete -f redis-service.yaml
+kubectl delete -f configmap.yaml
+minikube stop
+minikube delete
+```
