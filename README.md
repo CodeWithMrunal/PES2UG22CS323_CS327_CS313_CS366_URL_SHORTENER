@@ -6,10 +6,12 @@
 **Step 2:** Navigate to the directory where Dockerfile is present and Build a Docker Image: `sudo docker build -t url-shortener .`
 
 **Step 3:** Start the container: `sudo docker run -d -p 5000:5000 url-shortener`
+or
+**Step 4:**: if you have compose file: then `docker compose up --build`
 
 **Step 4:** Ensure the container running : `sudo docker ps`
 
-**Step 5:** Test the api using the request command: `curl -X POST http://localhost:5000/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'`
+**Step 5:** Test the api using the request command: `curl -X POST http://localhost:5000/shorten -H "Content-Type: application/json" -d '{"url": "https://kubernetes.io/docs/concepts/architecture/control-plane-node-communication/"}'`
 or you can use *POSTMAN*
 
 **Expected output:** You should receive a shortened url for www.google.com , which when clicked redirects you to google page.
@@ -91,6 +93,12 @@ curl -X POST http://<MINIKUBE_URL>/shorten -H "Content-Type: application/json" -
 kubectl exec -it <redis-podname> -- redis-cli
 ```
 
+for docker(WEEK 1):
+```
+docker ps
+docker exec -it <container_name> redis-cli
+```
+
 13. Redis CLI command:
 ```
 KEYS *
@@ -107,7 +115,7 @@ kubectl delete -f url-shortener-deployment.yaml
 kubectl delete -f url-shortener-service.yaml
 kubectl delete -f redis-deployment.yaml
 kubectl delete -f redis-service.yaml
-kubectl delete -f configmap.yaml
+kubectl delete -f url-shortener-configmap.yaml
 minikube stop
 minikube delete
 ```
