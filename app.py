@@ -25,6 +25,13 @@ def get_minikube_ip():
     except Exception as e:
         print(f"Error fetching Minikube IP or NodePort: {e}")
         return "http://localhost:5000/"
+    
+    # original_url = redis_client.get(short_id)
+    # if original_url:
+    #     return redirect(original_url.decode("utf-8"))
+    # else:
+    #     return "URL not found", 404
+
 
 
 BASE_URL = get_minikube_ip()
