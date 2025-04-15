@@ -119,3 +119,104 @@ kubectl delete -f url-shortener-configmap.yaml
 minikube stop
 minikube delete
 ```
+
+
+***Week 3***
+
+Build the image
+```
+minikube start
+docker build -t url-shortener .
+minikube image load url-shortener:latest
+```
+Add all the addons for cpu metrics metrics-server, 
+
+```
+minikube addons enable metrics-server
+```
+
+Enable the load balancer Ingress
+```
+minikube addons enable ingress
+```
+
+Deploy Redis
+```
+kubectl apply -f redis-deployment.yaml
+kubectl apply -f redis-service.yaml
+```
+
+Apply ConfigMap
+```
+kubectl apply -f url-shortener-configmap.yaml
+```
+
+Deploy URL Shortener
+```
+kubectl apply -f url-shortener-deployment.yaml
+kubectl apply -f url-shortener-service.yaml
+```
+
+Apply HPA and Ingress
+```
+kubectl apply -f url-shortener-hpa.yaml
+kubectl apply -f url-shortener-ingress.yaml
+```
+
+verify deployment
+```
+# Check if pods are running
+kubectl get pods
+
+# Check services
+kubectl get services
+
+# Check HPA status
+kubectl get hpa
+
+# Check ingress status
+kubectl get ingress
+```
+
+Monitor the System
+```
+# Watch pod scaling
+kubectl get pods -w
+
+# Monitor CPU usage
+kubectl top pods
+
+# Check logs
+kubectl logs -f -l app=url-shortener
+
+# Monitor HPA
+kubectl get hpa url-shortener-hpa --watch
+```
+
+Test the Application
+```
+# Get Minikube IP
+minikube ip
+
+# Test the API (replace IP_ADDRESS with Minikube IP)
+curl -X POST http://<IP_ADDRESS>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
+
+# For stress testing (install apache bench first)
+sudo apt-get install apache2-utils
+ab -n 1000 -c 100 http://<IP_ADDRESS>/
+```
+
+Cleanup 
+```
+kubectl delete -f url-shortener-hpa.yaml
+kubectl delete -f url-shortener-ingress.yaml
+kubectl delete -f url-shortener-deployment.yaml
+kubectl delete -f url-shortener-service.yaml
+kubectl delete -f redis-deployment.yaml
+kubectl delete -f redis-service.yaml
+kubectl delete -f url-shortener-configmap.yaml
+minikube stop
+minikube delete
+```
+
+
