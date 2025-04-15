@@ -15,4 +15,11 @@ spec:
       name: cpu
       target:
         type: Utilization
-        averageUtilization: 50
+        averageUtilization: 15
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 10  # reduce from default 300 to 60 seconds for faster downscaling
+      policies:
+        - type: Percent
+          value: 100  # allow reducing up to 100% of pods during scale down
+          periodSeconds: 10  # check every 30 seconds

@@ -199,11 +199,11 @@ Test the Application
 minikube ip
 
 # Test the API (replace IP_ADDRESS with Minikube IP)
-curl -X POST http://<IP_ADDRESS>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
+curl -X POST http://127.0.0.1:45197/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 
 # For stress testing (install apache bench first)
 sudo apt-get install apache2-utils
-ab -n 1000 -c 100 http://<IP_ADDRESS>/
+ab -n 1000 -c 100 http://127.0.0.1:45197/
 ```
 
 Cleanup 
