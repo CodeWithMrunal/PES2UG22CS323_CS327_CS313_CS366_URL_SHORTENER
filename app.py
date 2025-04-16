@@ -4,9 +4,9 @@ import subprocess
 import json
 import redis
 import os
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, jsonify, redirect, send_from_directory
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 # Redis connection config from environment variables
 REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
@@ -44,7 +44,7 @@ def generate_short_url():
 
 @app.route('/')
 def test():
-    return 'Server is working!'
+    return send_from_directory(app.static_folder, 'index.html')
 
 
 @app.route('/shorten', methods=['POST'])

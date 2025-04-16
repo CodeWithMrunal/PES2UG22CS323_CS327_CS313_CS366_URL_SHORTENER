@@ -86,7 +86,7 @@ minikube service url-shortener
 11. Test API
 
 ```
-curl -X POST http://127.0.0.1:38779/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
+curl -X POST http://127.0.0.1:5000/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 ```
 12. Check if url mapping is being stored in redis:
     (this command will open redis terminal inside the pod)
