@@ -56,10 +56,11 @@ minikube image list | grep url-shortener
 kubectl apply -f redis-deployment.yaml
 kubectl apply -f redis-service.yaml
 ```
-7. Apply ConfigMaps:
+7. Apply ConfigMaps & Secrets:
 
 ```
 kubectl apply -f url-shortener-configmap.yaml
+kubectl apply -f url-shortener-secret.yaml
 ```
 
 8. Deploy our url-shortner-app:
@@ -85,7 +86,7 @@ minikube service url-shortener
 11. Test API
 
 ```
-curl -X POST http://<MINIKUBE_URL>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
+curl -X POST http://127.0.0.1:38779/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 ```
 12. Check if url mapping is being stored in redis:
     (this command will open redis terminal inside the pod)
@@ -199,11 +200,11 @@ Test the Application
 minikube ip
 
 # Test the API (replace IP_ADDRESS with Minikube IP)
-curl -X POST http://127.0.0.1:45197/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
+curl -X POST http://127.0.0.1:38779/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 
 # For stress testing (install apache bench first)
 sudo apt-get install apache2-utils
-ab -n 1000 -c 100 http://127.0.0.1:45197/
+ab -n 1000 -c 100 http://127.0.0.1:38779/Zf0Dl
 ```
 
 Cleanup 
