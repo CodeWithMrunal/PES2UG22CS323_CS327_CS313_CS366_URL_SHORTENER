@@ -132,6 +132,12 @@ Enable the load balancer Ingress
 minikube addons enable ingress
 ```
 
+Deploy mongo
+```
+kubectl apply -f mongodb-deployment.yaml
+kubectl apply -f mongodb-service.yaml
+```
+
 Deploy Redis
 ```
 kubectl apply -f redis-deployment.yaml
@@ -184,7 +190,10 @@ kubectl logs -f -l app=url-shortener
 # Monitor HPA
 kubectl get hpa url-shortener-hpa --watch
 ```
-
+start service
+```
+minikube service url-shortener
+```
 Test the Application
 ```
 # Get Minikube IP
@@ -193,10 +202,30 @@ minikube ip
 # Test the API (replace IP_ADDRESS with Minikube IP)
 curl -X POST http://<IP_ADDRESS>/shorten -H "Content-Type: application/json" -d '{"url": "https://www.google.com"}'
 
+
 # For stress testing (install apache bench first)
 sudo apt-get install apache2-utils
 ab -n 1000 -c 100 http://<IP_ADDRESS>/
 ```
+
+verify deployment
+```
+kubectl get pods
+kubectl get services
+kubectl get hpa
+kubectl get ingress
+
+# Check Redis storage
+kubectl exec -it $(kubectl get pod -l app=redis -o jsonpath="{.items[0].metadata.name}") -- redis-cli KEYS "*"
+
+# Check MongoDB storage
+ kubectl exec -it $(kubectl get pod -l app=mongodb -o jsonpath="{.items[0].metadata.name}") -- mongosh
+
+ use url_shortener
+ show collections
+ db.urls.find()
+```
+
 
 Cleanup 
 ```
@@ -206,6 +235,8 @@ kubectl delete -f url-shortener-deployment.yaml
 kubectl delete -f url-shortener-service.yaml
 kubectl delete -f redis-deployment.yaml
 kubectl delete -f redis-service.yaml
+kubectl delete -f mongodb-deployment.yaml
+kubectl delete -f mongodb-service.yaml
 kubectl delete -f url-shortener-configmap.yaml
 minikube stop
 minikube delete
