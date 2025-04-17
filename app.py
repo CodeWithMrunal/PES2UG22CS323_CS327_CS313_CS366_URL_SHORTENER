@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify, redirect, send_from_directory
 
 app = Flask(__name__, static_folder='static')
 
-# Redis connection config from environment variables
+# Redis connections configuration from environment variables
 REDIS_HOST = os.environ.get('REDIS_HOST', 'localhost')
 REDIS_PORT = int(os.environ.get('REDIS_PORT', 6379))
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
